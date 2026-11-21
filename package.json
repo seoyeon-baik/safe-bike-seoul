@@ -1,0 +1,38 @@
+{
+  "name": "safe-bike-seoul",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "node --test tests/*.test.mjs",
+    "check:secrets": "node scripts/check-client-secrets.mjs",
+    "test:kakao-routing": "node scripts/test-kakao-routing.mjs",
+    "test:live": "node scripts/test-live-apis.mjs",
+    "check:upload": "node scripts/check-upload.mjs",
+    "check:deploy-env": "node scripts/check-deploy-env.mjs",
+    "build:vercel": "npm run check:upload && npm run check:deploy-env && npm run build && npm run check:secrets",
+    "pack:source": "node scripts/check-upload.mjs --pack"
+  },
+  "dependencies": {
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

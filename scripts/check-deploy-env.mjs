@@ -1,0 +1,10 @@
+import nextEnv from '@next/env';
+nextEnv.loadEnvConfig(process.cwd(), false, { info() {}, error() {} });
+const required = ['SEOUL_API_KEY', 'DATA_GO_KR_SERVICE_KEY', 'KAKAO_REST_API_KEY', 'NEXT_PUBLIC_KAKAO_MAP_APP_KEY'];
+const missing = required.filter(name => !process.env[name]?.trim());
+if (missing.length) throw Error(`배포 환경변수 누락: ${missing.join(', ')}`);
+if (process.env.API_DATA_MODE !== 'live') throw Error('배포에는 API_DATA_MODE=live가 필요합니다.');
+if (process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY === process.env.KAKAO_REST_API_KEY) throw Error('JavaScript 키와 REST API 키를 구분하세요.');
+const forbidden = Object.keys(process.env).filter(name => /^NEXT_PUBLIC_.*(SECRET|SERVICE_KEY|REST_API_KEY|SEOUL_API_KEY|TAAS_API_KEY)/.test(name));
+if (forbidden.length) throw Error(`서버 키에 공개 접두사를 사용하지 마세요: ${forbidden.join(', ')}`);
+console.log('배포 환경변수 검사 통과. 실제 API 권한 검사는 별도로 필요합니다.');
