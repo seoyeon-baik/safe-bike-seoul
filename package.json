@@ -13,7 +13,7 @@
     "test:live": "node scripts/test-live-apis.mjs",
     "check:upload": "node scripts/check-upload.mjs",
     "check:deploy-env": "node scripts/check-deploy-env.mjs",
-    "build:vercel": "npm run check:upload && npm run check:deploy-env && npm run build && npm run check:secrets",
+    "build:vercel": "npm run check:deploy-env && npm run build && npm run check:secrets",
     "pack:source": "node scripts/check-upload.mjs --pack"
   },
   "dependencies": {

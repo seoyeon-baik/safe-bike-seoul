@@ -44,6 +44,8 @@ GitHub 저장소를 Import한 뒤 다음 설정을 사용하세요.
 | Build Command | `npm run build:vercel` (`vercel.json`에 지정) |
 | Output Directory | Next.js 기본값 유지 |
 
+`check:upload`와 `pack:source`는 로컬에서 업로드 소스를 검사·패키징하는 명령입니다. Vercel에서는 `.env.example` 등 로컬 패키징 파일이 제외될 수 있으므로 배포 빌드에서 실행하지 않습니다. `build:vercel`은 배포 환경변수 검사 → Next.js 빌드 → 브라우저 산출물의 서버 키 노출 검사만 실행합니다.
+
 API Route가 있으므로 정적 사이트 내보내기를 사용하지 않습니다. API별 `maxDuration=120`을 설정했습니다. Vercel의 Fluid compute를 사용하고 선택한 요금제·프로젝트가 이 실행시간을 허용하는지 확인하세요. 사고지역 등 여러 외부 요청을 모으는 작업이 있어 짧은 실행 제한에서는 시간 초과가 날 수 있습니다. 메모리 캐시는 서버 인스턴스별로만 유지되어 외부 API 쿼터 사용량이 로컬과 다를 수 있습니다.
 
 참고: [Node.js 버전](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), [함수 실행시간](https://vercel.com/docs/functions/configuring-functions/duration).
