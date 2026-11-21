@@ -100,7 +100,7 @@ export default function BikeMap(props: Props) {
   // This schematic deliberately does not represent a navigable street map.
 
   return <div className="map-canvas">
-    {key && <Script id="kakao-sdk" src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`} onReady={() => { try { window.kakao?.maps.load(() => { setSdkLoaded(true); setReady(true); }); } catch { setFailed(true); } }} onError={() => setFailed(true)} />}
+    {key && <Script id="kakao-sdk" src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`} onReady={() => { try { window.kakao?.maps.load(() => { setFailed(false); setSdkLoaded(true); setReady(true); }); } catch { setFailed(true); } }} onError={() => setFailed(true)} />}
     <div ref={host} className="kakao-host" aria-label="카카오맵: 서울시 실제 따릉이 대여소와 카카오 공식 자전거 경로" style={{ visibility: ready && !failed ? 'visible' : 'hidden' }} />
     {(!ready || failed) && <div className="schematic">
       <svg viewBox="0 0 1000 650" preserveAspectRatio="none" role="img" aria-label="지도 연결 전 한강 개념도입니다. 실제 경로는 그리지 않습니다.">

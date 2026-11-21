@@ -102,3 +102,13 @@ Vercel 프로젝트의 Settings → Environment Variables에 다음 이름으로
 ```
 
 경로는 UI에서 실제 대여소를 선택해 확인합니다. 응답 없음과 인증 실패는 서로 다른 상태이며 예시 데이터로 대체되지 않습니다. 과거 사고정보와 경로 주변 지역 수만으로 실제 안전성을 단정하지 않습니다.
+
+## Production API 자동 점검
+
+기본 로컬 검사 외에 배포 주소도 점검할 수 있습니다. 아래 명령은 실제 API를 호출하고 `test-results/live-api-results.json`에 키 값 없는 결과를 저장합니다. SDK 검사는 로컬 JavaScript 키의 해당 도메인 허용 여부이며 브라우저 렌더링 검사와는 다릅니다.
+
+```bash
+TEST_BASE_URL=https://safe-bike-seoul-inky.vercel.app npm run test:live
+```
+
+지도 사용 시 고정 Production 주소를 우선 사용하세요. 개별 배포 주소는 별도 origin이므로 그 주소로 접속하려면 카카오 SDK 허용 도메인에도 별도로 등록해야 합니다.

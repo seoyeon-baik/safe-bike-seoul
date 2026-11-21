@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import nextEnv from '@next/env';
 nextEnv.loadEnvConfig(process.cwd(),true,{info(){},error(){}});
-const results=[],base='http://127.0.0.1:3000';
+const results=[],base=(process.env.TEST_BASE_URL || 'http://127.0.0.1:3000').replace(/\/$/,'');
+const target=new URL(base);
+if(target.protocol!=='https:' && !(target.protocol==='http:' && ['localhost','127.0.0.1'].includes(target.hostname))) throw Error('TEST_BASE_URL은 HTTPS 또는 로컬 주소여야 합니다.');
 const blocked=['API_NOT_CONFIGURED','KMA_NOT_CONFIGURED','TAAS_NOT_CONFIGURED','KAKAO_ROUTING_NOT_CONFIGURED','KAKAO_PERMISSION_DENIED','KAKAO_AUTH_FAILED','KMA_AUTH_FAILED','TAAS_AUTH_FAILED'];
 async function check(name,path,validate,expected=200){
  try{
@@ -29,7 +31,7 @@ await Promise.all([
 if(stations?.data?.length){
  await check('bicycle-routes','/api/routes?'+new URLSearchParams({stationId:stations.data[0].id,endLat:'37.5103',endLng:'126.9959'}),d=>{real(d,'kakao');assert.deepEqual([...new Set(d.data.map(r=>r.mode))].sort(),['BIKE_ONLY','SHORTEST']);assert(d.data.every(r=>r.segments.length&&r.segments.every(s=>s.length>=2)));});
 }else results.push({name:'bicycle-routes',status:'blocked',errorCode:'NO_ACTUAL_STATION'});
-for(const origin of ['http://localhost:3000','http://127.0.0.1:3000']){
+for(const origin of (process.env.TEST_BASE_URL ? [target.origin] : ['http://localhost:3000','http://127.0.0.1:3000'])){
  const key=process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY?.trim();
  if(!key){results.push({name:'map-sdk '+origin,status:'blocked',errorCode:'SDK_KEY_MISSING'});continue;}
  try{
