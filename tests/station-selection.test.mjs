@@ -42,7 +42,6 @@ function dashboard() {
       walk(tree);
       return { origin: routeOrigin, nodes,
         button: nodes.find(n => n.type === 'button' && n.props.type === 'submit'),
-        dropdown: nodes.find(n => n.props?.['aria-label'] === '출발 따릉이 대여소'),
         from: nodes.find(n => n.type === components.get('@/components/place-search') && n.props.label === '출발'),
       };
     },
@@ -57,11 +56,9 @@ test('actual nearby available station enables routing and manual selection reach
   let view = app.render();
   assert.equal(view.origin.id, 'nearest');
   assert.equal(view.button.props.disabled, false);
-  assert.equal(view.dropdown.props.value, 'nearest');
-  view.dropdown.props.onChange({ target: { value: 'other' } });
+  view.nodes.find(n => n.type === 'button' && n.props.className === 'station-row ' && n.props.children?.[1]?.props.children?.[0]?.props.children === 'other').props.onClick();
   view = app.render();
   assert.equal(view.origin.id, 'other');
-  assert.equal(view.dropdown.props.value, 'other');
   view.from.props.onSelect({ id: 'new', name: '새 출발지', lat: 37.55, lng: 126.95 });
   app.setStations([]);
   assert.equal(app.render().button.props.disabled, true);
