@@ -29,13 +29,14 @@ export default function Home() {
   const [activeMode, setActiveMode] = useState<RouteMode>('BIKE_ONLY');
   const [showStations, setShowStations] = useState(true);
   const [showIncidents, setShowIncidents] = useState(true);
-  const [selectedStation, setSelectedStation] = useState<NearbyStation | null>(null);
-  const selected = selectedStation?.id ?? '';
+  const [chosenStation, setSelectedStation] = useState<NearbyStation | null>(null);
   const [radius, setRadius] = useState(2000);
   const [availableOnly, setAvailableOnly] = useState(false);
   const [stationQuery, setStationQuery] = useState('');
   const stationData = useStations(draftFrom, radius, availableOnly, stationQuery);
   const stations = stationData.stations;
+  const selectedStation = chosenStation ?? stations.find(s => s.bikes > 0) ?? null;
+  const selected = selectedStation?.id ?? '';
   const weatherOrigin = selectedStation ?? draftFrom;
   const weather = useWeather(weatherOrigin);
   const routing = useBicycleRoutes(selectedStation, draftTo);
@@ -67,7 +68,7 @@ export default function Home() {
           <div className="search-box"><PlaceSearch label="출발" value={draftFrom} onSelect={selectOrigin}/><button type="button" className="swap" aria-label="출발지와 목적지 바꾸기" onClick={() => {selectOrigin(draftTo);setDraftTo(draftFrom);}}>⇅</button><PlaceSearch label="도착" value={draftTo} onSelect={setDraftTo}/></div>
           <button className="primary search-submit" type="submit" disabled={!selectedStation || routing.loading}>{routing.loading ? '공식 경로 조회 중…' : '선택한 대여소에서 경로 조회'} <span>⌕</span></button>
         </form>
-        <div className="route-selection"><strong>라이딩 출발 대여소</strong><p>{selectedStation?.name ?? '지도 또는 목록에서 따릉이 대여소를 선택하세요.'}</p><span>목적지: {draftTo.name}</span></div>
+        <div className="route-selection"><strong>라이딩 출발 대여소</strong><p>{selectedStation?.name ?? (stationData.loading ? '주변 대여소를 불러오는 중입니다…' : '대여 가능한 주변 대여소가 없습니다. 아래 조회 상태와 검색 조건을 확인하세요.')}</p>{stations.length > 0 && <label>출발 따릉이 대여소<select aria-label="출발 따릉이 대여소" value={selected} onChange={e => selectStation(e.target.value)}>{!selected && <option value="" disabled>대여소를 선택하세요</option>}{stations.map(s => <option key={s.id} value={s.id}>{s.name} · {formatDistance(s.distanceMeters)} · {s.bikes}대</option>)}</select></label>}{!chosenStation && selectedStation && <p>가장 가까운 대여 가능 대여소를 기본 선택했습니다. 다른 대여소로 변경할 수 있습니다.</p>}<span>목적지: {draftTo.name}</span></div>
         <p className="form-notice" role="status">{routing.loading ? '자전거도로 우선·최단 경로를 카카오에서 조회 중입니다.' : routing.error || (routing.routes.length ? '카카오 API가 반환한 실제 경로입니다.' : '아직 조회된 경로가 없습니다. 조회 실패 시 임의의 경로를 만들지 않습니다.')}</p>
         <div className="planner-scope"><strong>비교 기준</strong><p>선택한 대여소에서 같은 목적지까지 두 경로를 비교합니다. 과거 사고지역 수만으로 실제 안전성을 판단하지 않습니다.</p><a href="#comparison">거리와 주변 지역 수 확인</a></div>
         <WeatherCard origin={weatherOrigin} isStation={Boolean(selectedStation)} weather={weather}/>
