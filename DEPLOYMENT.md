@@ -41,10 +41,10 @@ GitHub 저장소를 Import한 뒤 다음 설정을 사용하세요.
 | Root Directory | ZIP 내용을 저장소 루트에 올렸다면 `.` / 현재 상위 폴더 구조로 올렸다면 `safe-bike-seoul` |
 | Node.js | 24.x (`package.json`에도 고정) |
 | Install Command | `npm ci` |
-| Build Command | `npm run build:vercel` (`vercel.json`에 지정) |
+| Build Command | `npm run build` (`vercel.json`에 지정) |
 | Output Directory | Next.js 기본값 유지 |
 
-`check:upload`와 `pack:source`는 로컬에서 업로드 소스를 검사·패키징하는 명령입니다. Vercel에서는 `.env.example` 등 로컬 패키징 파일이 제외될 수 있으므로 배포 빌드에서 실행하지 않습니다. `build:vercel`은 배포 환경변수 검사 → Next.js 빌드 → 브라우저 산출물의 서버 키 노출 검사만 실행합니다.
+`check:upload`와 `pack:source`는 로컬에서 업로드 소스를 검사·패키징하는 명령입니다. Vercel에서는 `.env.example` 등 로컬 패키징 파일이 제외될 수 있으므로 배포 빌드에서 실행하지 않습니다. 기본 배포 명령 `npm run build`는 Next.js 빌드만 실행합니다. 환경변수·브라우저 키 노출 검사도 함께 실행하려면 로컬에서 선택적으로 `npm run build:vercel`을 사용할 수 있습니다.
 
 API Route가 있으므로 정적 사이트 내보내기를 사용하지 않습니다. API별 `maxDuration=120`을 설정했습니다. Vercel의 Fluid compute를 사용하고 선택한 요금제·프로젝트가 이 실행시간을 허용하는지 확인하세요. 사고지역 등 여러 외부 요청을 모으는 작업이 있어 짧은 실행 제한에서는 시간 초과가 날 수 있습니다. 메모리 캐시는 서버 인스턴스별로만 유지되어 외부 API 쿼터 사용량이 로컬과 다를 수 있습니다.
 
@@ -67,7 +67,7 @@ Vercel 프로젝트의 Settings → Environment Variables에 다음 이름으로
 
 서버 키에는 `NEXT_PUBLIC_` 접두사를 붙이지 마세요. JavaScript 키는 SDK 동작상 브라우저에 보이며 아래 도메인 제한으로 관리합니다. REST 키나 Admin 키를 JavaScript 변수에 넣으면 안 됩니다. 공개 키도 소스에는 하드코딩하지 않습니다.
 
-환경변수를 바꾸면 **Redeploy**하세요. 특히 `NEXT_PUBLIC_` 값은 빌드 시 브라우저 코드에 포함됩니다. 배포 빌드는 변수 누락·검색 demo 모드를 검사하고, 빌드 후 브라우저 산출물에 설정된 실제 서버 키가 포함됐는지 검사합니다. 이 검사가 API 권한 성공을 보장하지는 않습니다.
+환경변수를 바꾸면 **Redeploy**하세요. 특히 `NEXT_PUBLIC_` 값은 빌드 시 브라우저 코드에 포함됩니다. 기본 배포 빌드에서는 환경변수와 인증키 노출 검사를 별도로 실행하지 않습니다. 필요하면 로컬에서 `npm run check:deploy-env`와 빌드 후 `npm run check:secrets`를 실행하세요. 이 검사가 API 권한 성공을 보장하지는 않습니다.
 
 참고: [Vercel 환경변수 관리](https://vercel.com/docs/environment-variables/managing-environment-variables).
 
